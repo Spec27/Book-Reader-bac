@@ -15,7 +15,7 @@
     ],
     "servers": [
         {
-            "url": "https://books-reader-project.herokuapp.com"
+            "url": "https://https://book-reader-bac.onrender.com"
         },
         {
             "url": "http://localhost:4000"
