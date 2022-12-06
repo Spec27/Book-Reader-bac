@@ -1,0 +1,1500 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "version": "1.1.0",
+        "title": "Books-reader Api",
+        "description": "API for the Books-reader application, allows you to add books to your own library, displays statistics: time, amount of material read"
+    },
+    "consumes": [
+        "aplication/json",
+        "multipart/form-data"
+    ],
+    "produces": [
+        "aplication/json",
+        "multipart/form-data"
+    ],
+    "servers": [
+        {
+            "url": "https://books-reader-project.herokuapp.com"
+        },
+        {
+            "url": "http://localhost:4000"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Authorization endpoints"
+        },
+        {
+            "name": "Books",
+            "description": "Books endpoints"
+        },
+        {
+            "name": "Users",
+            "description": "Reader endpoints"
+        },
+        {
+            "name": "Trainings",
+            "description": "Trainings endpoints"
+        }
+    ],
+    "paths": {
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User registration",
+                "parameters": [],
+                "requestBody": {
+                    "description": "Registrations object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegistrationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RegistrationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
+                    "409": {
+                        "description": "Email already registered",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User login",
+                "parameters": [],
+                "requestBody": {
+                    "description": "Login object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Email not found , Password incorrect",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User logout",
+                "parameters": [],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content (in case of successful logout)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LogoutResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized (invalid token)",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/api/auth/google": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User registration",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GoogleResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/verify": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Verification email",
+                "parameters": [],
+                "requestBody": {
+                    "description": "Verification object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerificationEmailRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Verification email was sent",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VerificationEmailResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Verification has already been passed",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Email not found ",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/api/auth/forgotten": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Password recovery",
+                "parameters": [],
+                "requestBody": {
+                    "description": "Verification object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PasswordRecoveryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Verification email was sent",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PasswordRecoveryResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Email not found ",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Cant find user with this email",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/api/auth/verify/{token}": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User redirect frontEnd",
+                "parameters": [],
+                "responses": {
+                    "302": {
+                        "description": "Redirect fronEnd",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RedirectFrontEndResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not Found",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/api/books/add": {
+            "post": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Add user book",
+                "parameters": [],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "requestBody": {
+                    "description": "Book object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BookAddRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BookAddResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {}
+                    },
+                    "409": {
+                        "description": "Email already registered",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "jwt expired"
+                    }
+                }
+            }
+        },
+        "/api/books/{id}/status": {
+            "patch": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Update  status reader book",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "requestBody": {
+                    "description": "Book object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateTheReadingStatusOfTheBookRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UpdateTheReadingStatusOfTheBookResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (Incorrect ID format , Status must be completed  , invalid request body )",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {}
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "(Book not found , Book does not belong to you)",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "jwt expired"
+                    }
+                }
+            }
+        },
+        "/api/books/{id}/resume": {
+            "patch": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Update user book",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "requestBody": {
+                    "description": "Book object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserBookRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UpdateUserBookResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (Incorrect ID format , Status must be completed  , invalid request body )",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "(Book not found , Book does not belong to you)",
+                        "content": {}
+                    },
+                    "409": {
+                        "description": "Email already registered",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "jwt expired"
+                    }
+                }
+            }
+        },
+        "/api/users/current": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Current user",
+                "parameters": [],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CurrentUserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {}
+                    },
+                    "409": {
+                        "description": "Email already registered",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "jwt expired"
+                    }
+                }
+            }
+        },
+        " /api/users/{id}/results": {
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "User id result",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "requred": true,
+                        "type": "string"
+                    }
+                ],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "requestBody": {
+                    "description": "User object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserIdRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserIdResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (Incorrect ID format ,  invalid request body )",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "jwt expired"
+                    }
+                }
+            }
+        },
+        " /api/users/{id}/training": {
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "User id trining",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "requred": true,
+                        "type": "string"
+                    }
+                ],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "requestBody": {
+                    "description": "User object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserUpdateTrainingIdRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserUpdateTrainingResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (Incorrect ID format ,  invalid request body )",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "jwt expired"
+                    }
+                }
+            }
+        },
+        " /api/users/{id}/progress": {
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "User id trining",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "requred": true,
+                        "type": "string"
+                    }
+                ],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User progress was reset to empty result",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResetUserProgressIdResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (Progress is already set to empty )",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "jwt expired"
+                    }
+                }
+            }
+        },
+        "/api/trainings/start": {
+            "post": {
+                "tags": [
+                    "Trainings"
+                ],
+                "summary": "Start Trainings",
+                "parameters": [],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "requestBody": {
+                    "description": "Training object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StartTrainingRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StartTrainingResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Book is not found",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "jwt expired"
+                    }
+                }
+            }
+        },
+        "/api/trainings/{id}/status": {
+            "patch": {
+                "tags": [
+                    "Trainings"
+                ],
+                "summary": "Training Status",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "requestBody": {
+                    "description": "Training object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TrainingStatusRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TrainingStatusResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (Incorrect ID format , Status must be completed  , invalid request body )",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "jwt expired"
+                    }
+                }
+            }
+        },
+        "/api/trainings": {
+            "get": {
+                "tags": [
+                    "Trainings"
+                ],
+                "summary": "Trainings",
+                "parameters": [],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TrainingsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "jwt expired"
+                    }
+                }
+            }
+        },
+        "/api/trainings/{trainingId}": {
+            "delete": {
+                "tags": [
+                    "Trainings"
+                ],
+                "summary": "Training delete book",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TrainingDeleteBookResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (Incorrect ID format , Status must be completed  , invalid request body )",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "jwt expired"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "RegistrationRequest": {
+                "type": "object",
+                "required": [
+                    "username",
+                    "email",
+                    "password",
+                    "repeat_password"
+                ],
+                "properties": {
+                    "username": {
+                        "description": "User`s name"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "User`s email",
+                        "format": "email"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "User`s password",
+                        "example": "qwert12345"
+                    },
+                    "repeat_password": {
+                        "type": "string",
+                        "description": "User`s password",
+                        "example": "qwert12345"
+                    }
+                }
+            },
+            "RegistrationResponse": {
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "type": "object",
+                        "properties": {
+                            "username": {
+                                "type": "string",
+                                "description": "User`s name"
+                            },
+                            "email": {
+                                "type": "string",
+                                "description": "User`s email",
+                                "format": "email"
+                            },
+                            "_id": {
+                                "type": "string",
+                                "description": "User`s id",
+                                "example": "4826873682742892"
+                            }
+                        }
+                    }
+                }
+            },
+            "LoginRequest": {
+                "type": "object",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "User`s email",
+                        "format": "email"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "User`s password",
+                        "example": "qwert12345"
+                    }
+                }
+            },
+            "LoginResponse": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "example": "dguwg54duyw.ccscgdsuchu22cxcs7dsjciodsjcdiosjcdicjdi._chcb32fdshbxs"
+                    },
+                    "user": {
+                        "type": "object",
+                        "properties": {
+                            "email": {
+                                "type": "string",
+                                "description": "User`s email",
+                                "format": "email"
+                            },
+                            "_id": {
+                                "type": "string",
+                                "description": "User`s id",
+                                "example": "4826873682742892"
+                            }
+                        }
+                    }
+                }
+            },
+            "LogoutResponse": {
+                "type": "object",
+                "properties": {}
+            },
+            "GoogleResponse": {
+                "type": "object",
+                "properties": {
+                    "link": {
+                        "type": "string",
+                        "description": "User`s registration google",
+                        "example": "http://localhost:4000/googleAuth?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMzQ0ZjRjYTJjZDI2NjYyZmJkN2Y4YyIsImlhdCI6MTY2NDQ0NjE2NCwiZXhwIjoxNjY0NDc0OTY0fQ.EMeG56qD9ZUhOPlbzn0DOQa4JV8qvlg0MrR5SRtjxyo"
+                    }
+                }
+            },
+            "VerificationEmailRequest": {
+                "type": "object",
+                "required": [
+                    "email"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "User`s email",
+                        "format": "email"
+                    }
+                }
+            },
+            "VerificationEmailResponse": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Verification email was sent"
+                    }
+                }
+            },
+            "PasswordRecoveryRequest": {
+                "type": "object",
+                "required": [
+                    "email"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "User`s email",
+                        "format": "email"
+                    }
+                }
+            },
+            "PasswordRecoveryResponse": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "check your email"
+                    }
+                }
+            },
+            "RedirectFrontEndResponse": {
+                "type": "object",
+                "properties": {
+                    "redirect": {
+                        "type": "string",
+                        "example": "Redirect frontEnd"
+                    }
+                }
+            },
+            "BookAddRequest": {
+                "type": "object",
+                "required": [
+                    "title",
+                    "author",
+                    "pageAmount",
+                    "publishingDate",
+                    "JWT"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "Book title",
+                        "example": "Garri Potter"
+                    },
+                    "author": {
+                        "type": "string",
+                        "description": "Book author",
+                        "example": "Joanne Rowling"
+                    },
+                    "pageAmount": {
+                        "type": "Integer",
+                        "description": "Book page",
+                        "example": 345
+                    },
+                    "publishingDate": {
+                        "type": "Data",
+                        "description": "Publication date of the book",
+                        "example": "2022-09-26T13:22:40.148+00:00"
+                    }
+                }
+            },
+            "BookAddResponse": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "Book title",
+                        "example": "Garri Potter"
+                    },
+                    "author": {
+                        "type": "string",
+                        "description": "Book author",
+                        "example": "Joanne Rowling"
+                    },
+                    "publishingDate": {
+                        "type": "string",
+                        "description": "Publication date of the book",
+                        "example": "2022-09-26T13:22:40.148+00:00"
+                    },
+                    "pageAmount": {
+                        "type": "Integer",
+                        "description": "Book page",
+                        "example": 345
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Book status",
+                        "example": "complited"
+                    },
+                    "rating": {
+                        "type": "Integer",
+                        "description": "Book rating",
+                        "example": 10
+                    },
+                    "reader": {
+                        "type": "string",
+                        "description": "Book reader",
+                        "example": "User`s Id (6334be54b3ae5303571c9617)"
+                    },
+                    "_id": {
+                        "type": "string",
+                        "description": "Book Id",
+                        "example": "Book Id (6335ea8b4a979967e59fe986)"
+                    }
+                }
+            },
+            "UpdateUserBookRequest": {
+                "type": "object",
+                "required": [
+                    "rating",
+                    "summary"
+                ],
+                "properties": {
+                    "rating": {
+                        "type": "Integer",
+                        "description": "Book rating",
+                        "example": 5
+                    },
+                    "summary": {
+                        "type": "string",
+                        "description": "Book rating",
+                        "example": "good at"
+                    }
+                }
+            },
+            "UpdateUserBookResponse": {
+                "type": "object",
+                "properties": {
+                    "_id": {
+                        "type": "string",
+                        "description": "Book Id",
+                        "example": "6335ea8b4a979967e59fe986"
+                    },
+                    "rating": {
+                        "type": "Integer",
+                        "description": "Book rating",
+                        "example": 5
+                    },
+                    "summary": {
+                        "type": "string",
+                        "description": "Book rating",
+                        "example": "good at"
+                    }
+                }
+            },
+            "UpdateTheReadingStatusOfTheBookRequest": {
+                "type": "object",
+                "required": [
+                    "status"
+                ],
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "description": "Update the reading status of the book",
+                        "example": "oneOf: inprogress , next , completed"
+                    }
+                }
+            },
+            "UpdateTheReadingStatusOfTheBookResponse": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "description": "Update the reading status of the book",
+                        "example": " completed"
+                    }
+                }
+            },
+            "CurrentUserResponse": {
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "type": "object",
+                        "properties": {
+                            "info": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "description": "User`s name",
+                                        "example": "masky"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "description": "User`s email",
+                                        "format": "email"
+                                    },
+                                     "_id": {
+                                        "type": "string",
+                                        "description": "User`s id",
+                                        "example":"4jk45u8r3ir4557ytr"
+                                    },
+                                    "avatarUrl": {
+                                        "type": "string",
+                                        "description": "User`s avatar"
+                                    },
+                                    "firstVisit": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "isTraining":{
+                                        "type":"boolean",
+                                        "example":"true"
+                                    },
+                                    "progress": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "trainingDate": {
+                                                    "type": "string",
+                                                    "example": "2022-09-26T13:22:40.148+00:00"
+                                                },
+                                                "pagesAmount": {
+                                                    "type": "Integer",
+                                                    "example": 30
+                                                },
+                                                "_id": {
+                                                    "type": "string",
+                                                    "example": "4826ads873682742xa89a2"
+                                                }
+                                            }
+                                        },
+                                        "example": []
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "books": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "_id": {
+                                    "type": "string",
+                                    "example": "4826ads873682742xa89a2"
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "example": "World of warcraft"
+                                },
+                                "author": {
+                                    "type": "string",
+                                    "example": "Author"
+                                },
+                                "publishingDate": {
+                                    "type": "string",
+                                    "example": "2022-09-26T13:22:40.148+00:00"
+                                },
+                                "pagesAmount": {
+                                    "type": "Integer",
+                                    "example": 30
+                                },
+                                "status": {
+                                    "type": "string",
+                                    "example": "next"
+                                },
+                                "rating": {
+                                    "type": "Integer",
+                                    "example": "0"
+                                },
+                                "summary": {
+                                    "type": "string",
+                                    "example": ""
+                                }
+                            }
+                        },
+                        "example": []
+                    }
+                }
+            },
+            "UserIdRequest": {
+                "type": "object",
+                "required": [
+                    "trainingDate",
+                    "pagesAmount"
+                ],
+                "properties": {
+                    "trainingDate": {
+                        "type": "string",
+                        "example": "2022-02-23"
+                    },
+                    "pagesAmount": {
+                        "type": "Integer",
+                        "example": 12
+                    }
+                }
+            },
+            "UserIdResponse": {
+                "type": "object",
+                "properties": {
+                    "_id": {
+                        "type": "string",
+                        "example": "6335ea8b4a979967e59fe986"
+                    },
+                    "progress": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "trainingDate": {
+                                    "type": "string",
+                                    "example": "2022-02-23T00:00:00.000Z"
+                                },
+                                "pagesAmount": {
+                                    "type": "Integer",
+                                    "example": 12
+                                },
+                                "_id": {
+                                    "type": "string",
+                                    "example": "6335ea8b4a979967e59fe986"
+                                }
+                            }
+                        },
+                        "example": [
+                            {
+                                "trainingDate": "2022-02-23T00:00:00.000Z",
+                                "pagesAmount": 30,
+                                "_id": "63342355569a53571814f37e"
+                            },
+                            {
+                                "trainingDate": "2022-03-23T00:00:00.000Z",
+                                "pagesAmount": 31,
+                                "_id": "633491002a9ae46e19e68888"
+                            }
+                        ]
+                    }
+                }
+            },
+             "UserUpdateTrainingIdRequest": {
+                "type": "object",
+                "required": [
+                    "isTraining"
+                ],
+                "properties":{
+                     "isTraining": {
+                        "type": "boolean",
+                        "example": "true"
+                }
+                }
+               
+            },
+            "UserUpdateTrainingResponse": {
+                "type": "object",
+                "properties": {
+                     "isTraining": {
+                        "type": "boolean",
+                        "example": "true"
+                }
+                }
+            },
+            "ResetUserProgressIdResponse": {
+                "type": "object",
+                "properties": {
+                     "message": {
+                        "type": "string",
+                        "example": "User progress was reset to empty result"
+                }
+                }
+            },
+            "StartTrainingRequest": {
+                "type": "object",
+                "required": [
+                    "startDate",
+                    "finishDate",
+                    "book"
+                ],
+                "properties": {
+                    "startDate": {
+                        "type": "string",
+                        "example": "03.01.01"
+                    },
+                    "finishDate": {
+                        "type": "string",
+                        "example": "03.03.03"
+                    },
+                    "book": {
+                        "type": "string",
+                        "example": "bdh232435h3489574fhsj"
+                    }
+                }
+            },
+            "StartTrainingResponse": {
+                "type": "object",
+                "properties": {
+                    "_id": {
+                        "type": "string",
+                        "example": "6332b93e396b1b793d4f55ac"
+                    },
+                    "startDate": {
+                        "type": "string",
+                        "example": "2001-02-28T22:00:00.000Z"
+                    },
+                    "finishDate": {
+                        "type": "string",
+                        "example": "2003-03-02T22:00:00.000Z"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "active"
+                    },
+                    "book": {
+                        "type": "string",
+                        "example": "bdh232435h3489574fhsj"
+                    },
+                    "participator": {
+                        "type": "string",
+                        "example": "6332b93e396b1b793d4f55ac"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "example": "2022-09-30T18:23:19.245Z"
+                    },
+                    "updatedAt": {
+                        "'type": "string",
+                        "example": "2022-09-30T18:23:19.245Z"
+                    }
+                }
+            },
+            "TrainingStatusRequest": {
+                "type": "object",
+                "required": [
+                    "status"
+                ],
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "example": "active"
+                    }
+                }
+            },
+            "TrainingStatusResponse": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "example": "active"
+                    }
+                }
+            },
+            "TrainingsResponse": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "_id": {
+                                    "type": "string",
+                                    "example": "6335ea8b4a979967e59fe986"
+                                },
+                                "pageAmoutn": {
+                                    "type": "Integer",
+                                    "example": 50
+                                },
+                                "status": {
+                                    "type": "string",
+                                    "example": "active"
+                                },
+                                "startDate": {
+                                    "type": "string",
+                                    "example": "2022-02-23"
+                                },
+                                "finishDate": {
+                                    "type": "string",
+                                    "example": "2022-02-23"
+                                },
+                                "book": {
+                                    "type": "object",
+                                    "properties": {
+                                        "_id": {
+                                            "type": "string",
+                                            "description": "Book Id",
+                                            "example": "6335ea8b4a979967e59fe986"
+                                        },
+                                        "title": {
+                                            "type": "string",
+                                            "description": "Book title",
+                                            "example": "Title"
+                                        },
+                                        "author": {
+                                            "type": "string",
+                                            "description": "Book author",
+                                            "example": "Author"
+                                        },
+                                        "publishingDate": {
+                                            "type": "string",
+                                            "description": "Publication date of the book",
+                                            "example": "2022-02-23T00:00:00.000Z"
+                                        },
+                                        "pageAmount": {
+                                            "type": "Integer",
+                                            "description": "Page Amount",
+                                            "example": 455
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "description": "Status",
+                                            "example": "completed"
+                                        },
+                                        "rating": {
+                                            "type": "Integer",
+                                            "description": "Book status",
+                                            "example": 5
+                                        },
+                                        "summary": {
+                                            "type": "string",
+                                            "example": "good at"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "TrainingDeleteBookResponse": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "book deleted"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "Bearer": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}

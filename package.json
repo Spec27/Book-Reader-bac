@@ -1,0 +1,51 @@
+{
+  "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
+    "axios": "^0.27.2",
+    "bcrypt": "^5.0.1",
+    "cjs": "^0.0.11",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.2",
+    "eslint-plugin-promise": "^6.0.1",
+    "express": "^4.18.1",
+    "joi": "^17.6.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.6.1",
+    "morgan": "^1.10.0",
+    "passport-jwt": "^4.0.0",
+    "query-string": "^7.1.1",
+    "randomuuid": "^1.0.1",
+    "swagger-ui-express": "^4.5.0"
+  },
+  "name": "books-reader_back",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cross-env NODE_ENV=production node ./server.js",
+    "start:dev": "cross-env NODE_ENV=development nodemon ./server.js",
+    "lint": "eslint **/*.js",
+    "lint:fix": "eslint --fix **/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Spec27/Book-Reader-bac.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Spec27/Book-Reader-bac/issues"
+  },
+  "homepage": "https://github.com/Spec27/Book-Reader-bac#readme",
+  "description": "",
+  "devDependencies": {
+    "eslint": "^8.24.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-react": "^7.31.8",
+    "nodemon": "^2.0.20"
+  }
+}
