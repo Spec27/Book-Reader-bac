@@ -78,7 +78,7 @@ exports.googleRedirect = async (req, res) => {
   }
 
   return res.redirect(
-    /* `${process.env.FRONTEND_URL}/googleAuth?token=${token}&name=${userName}&email=${userEmail}` */
-    `${process.env.FRONTEND_URL}/login?token=${token}&name=${userName}&email=${userEmail}`
+    `${process.env.FRONTEND_URL}/library?token=${token}&name=${userName}&email=${userEmail}`
+   /*  `${process.env.FRONTEND_URL}/login?token=${token}&name=${userName}&email=${userEmail}` */
   )
 }
